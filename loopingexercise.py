@@ -9,6 +9,8 @@ def main():
     ex1()
     ex2('KABOOM')
     ex3("askaliceithinkshe'llknow")
+    ex4()
+    ex5()
     
     
 def ex1():
@@ -35,8 +37,24 @@ def ex3(str):
     
 def ex4():
     for x in range(1, 5):
+        for y in range(5, 8):
+            product = x * y
+            print(str(x) + ' | ' + str(y) + ' | ' + str(product))
+            
+def ex5():
+    listoflists = [['mn','pa','ut'],['b','p','c'],['echo','charlie','tango']]
+    labels = {"state":"US State Abbr: ", "element":"Chemical Element: ", "alpha":"Phonetic Call: "}
+    
+    labellist = []
+    for value in labels.values():
+        labellist.append(value)
         
+    for i in range(0, len(listoflists)):
+        val = listoflists[i]
+        for j in range(0, len(val)):
+            print(labellist[i] + val[j])
         
+ 
             
             
 main()           
