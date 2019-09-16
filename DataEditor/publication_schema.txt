@@ -1,0 +1,1 @@
+{"uid": "MAS2912941190", "type": "Journal article", "title": "Publication Title1", "author": {"name": "Maurizio Fava", "degrees": ["MD","PhD"], "affiliation": {"affname": "Harvard University", "city": "Boston"}, "department":{"Dept": "Dept of Psychiatry", "Div": "Div. of Experimental Medicine"}}, "source": "Molecular Psychiatry", "year": 2019}
