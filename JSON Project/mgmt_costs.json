@@ -1,0 +1,6 @@
+[
+{"budget_cutoff": 10000, "criterion": "<=", "mgmt_rate": ".08"},
+{"budget_cutoff": 100000, "criterion": "<=", "mgmt_rate": ".05"},
+{"budget_cutoff": 100000, "criterion": ">", "mgmt_rate": ".11"}
+]
+	
