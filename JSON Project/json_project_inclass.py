@@ -5,7 +5,7 @@
 # and search criteria from a JSON file, 
 # printing well-formed matching records to the console
 # Author: Lisa Nydick
-# Last Modified: 10/3/2019
+# Last Modified: 10/7/2019
 #####################################
 
 import json, csv, os
@@ -117,8 +117,9 @@ def logMalformedProject(proj, field):
 # Tests whether a project meets all filter criteria and returns a True or False value
 ###################################################################################################        
 def passProjectFilter(proj, filters):
-    test_results = []
-    passed_all_tests = False
+    
+    #Assume the project passes all tests unless overwritten
+    passed_all_tests = True
     
     #Loop through all filters, testing whether their values match the input project's values for the same fields
     #Build a list of test results since a record could pass one test but fail another.
@@ -130,27 +131,16 @@ def passProjectFilter(proj, filters):
 
             #If the length of the value list is greater than 1, 
             #send the list to a function that will loop through it's values, looking for a match.
-            #Append the test result to a list of test results
             if len(v) > 1:
-                if testOrCondition(proj, k, v): 
-                    test_results.append(True)
-                else:
-                    test_results.append(False)
+                if testOrCondition(proj, k, v) == False: 
+                    #project failed a test
+                    passed_all_tests = False
             else:
-                #there is only one value in the criterion list, so just test it directly
-                if testValue(proj, k, v[0]):
-                    test_results.append(True)
-                else:
-                    test_results.append(False)
-        else:
-            test_results.append(True)
+                #there is only one value in the list, so just test it directly
+                if testValue(proj, k, v[0]) == False:
+                    #project failed a test
+                    passed_all_tests = False
 
-    #Loop through the test results list looking for at least one failed test.
-    #If there's a failed test in the list, the entire record fails
-    passed_all_tests = True             #Start out assuming all tests were passed
-    for j in range(len(test_results)):
-        if test_results[j] == False:    #If one failed, reset the boolean to False
-            passed_all_tests = False
                     
     return passed_all_tests
     
@@ -159,7 +149,6 @@ def passProjectFilter(proj, filters):
 # Returns True if the field values match, False if they don't match
 ###################################################################################################        
 def testValue(proj, field, filter_value):
-    # If the filter value is blank, the field values automatically match
     if str(filter_value) == str(proj[field]) or str(filter_value) == '':
         return True
     else:
