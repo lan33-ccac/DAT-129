@@ -5,10 +5,10 @@
 # and search criteria from a JSON file, 
 # printing well-formed matching records to the console
 # Author: Lisa Nydick
-# Last Modified: 10/7/2019
+# Last Modified: 10/8/2019
 #####################################
 
-import json, csv, os
+import json, csv
 from datetime import datetime
 
 
@@ -35,10 +35,7 @@ def main():
 # Deletes a pre-existing log file and creates a new one with a header record
 ###################################################################################################
 def initializeLogFile():
-    #delete the log file if it already exists
-    if os.path.exists(LOG_FILE):
-        os.remove(LOG_FILE)
-    
+
     with open(LOG_FILE, 'w', newline = '') as errorfile:
         writer = csv.writer(errorfile)
         header = ['Timestamp', 'Project ID', 'Project Name', 'Error Msg']
@@ -118,11 +115,10 @@ def logMalformedProject(proj, field):
 ###################################################################################################        
 def passProjectFilter(proj, filters):
     
-    #Assume the project passes all tests unless overwritten
+    #Assume the project passes all tests unless proven otherwise
     passed_all_tests = True
     
     #Loop through all filters, testing whether their values match the input project's values for the same fields
-    #Build a list of test results since a record could pass one test but fail another.
     for k, v in filters.items():
         
         if v != '':     #If the value is blank, the current field automatically passes its test
