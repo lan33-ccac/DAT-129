@@ -14,7 +14,7 @@ from datetime import datetime
 
 LOG_FILE='malformedProjects.csv'
 PROJECT_CSV = 'capital_projects.csv'
-CRITERIA_FILE ='search_criteria_2.json'
+CRITERIA_FILE ='search_criteria_3.json'
 
 ###################################################################################################
 # Main Function
