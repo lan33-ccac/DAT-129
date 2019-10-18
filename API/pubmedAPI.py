@@ -15,6 +15,15 @@ import csv
 BASE = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/'
 DB = 'db=pubmed'
 QUERY = '&term=(ketamine[Title]+AND+("depressive disorder"[MeSH Terms]+OR+"depression"[MeSH Terms]))+AND+("2017/01/01"[PDAT]:"2019/10/01"[PDAT])'
+RETMODE= '&retmode=xml'
+RETTYPE= '&rettype=uilist'
+IDPARM = '&id='
+
+#Utilities
+ESEARCH = 'esearch.fcgi?'
+ESUMMARY = 'esummary.fcgi?'
+EFETCH = 'efetch.fcgi?'
+
 
 #CSV header record
 HEADER = 'PMID', 'PubYear', 'Source', 'Title', 'PubType', 'Volume', 'Issue', 'Pages', 'DOI', 'Authors', 'Keywords'
@@ -57,16 +66,16 @@ def main():
     #If CSV file was successfully initialized, proceed with the rest of the program
     if fatal_error == False:
         #Set parameter values that all utilities have in common
-        retstart, retmax, retmode = setCommonParms(retstart_input, retmax_input)
+        retstart, retmax = setCommonParms(retstart_input, retmax_input)
 
         #Get a list of PMIDs from the esearch utility
-        id_list_str = getPMIDs(retstart, retmax, retmode, xml_file_ids)
+        id_list_str = getPMIDs(retstart, retmax, xml_file_ids)
     
         #Get summary data (meta data) out of the eSummary utility based on a list of PMIDs 
-        summary_list = getSummaryInfo(retstart, retmax, retmode, xml_file_summary, id_list_str)
+        summary_list = getSummaryInfo(retstart, retmax, xml_file_summary, id_list_str)
     
         #Get a list of authors and keywords from the eFetch utility based on a list of PMIDs
-        author_list, keyword_list = getFullInfo(retstart, retmax, retmode, xml_file_full, id_list_str)
+        author_list, keyword_list = getFullInfo(retstart, retmax, xml_file_full, id_list_str)
     
         #Concatinate values from the summary and full XML files into a new list
         publication_list = concat_summary_and_full_lists(summary_list, author_list, keyword_list)
@@ -127,26 +136,25 @@ def initializeCSVFile(csv_outfile):
 
 
 ###################################################################################################
-# Sets the values of URL parms that all utilities have in common
+# Sets the values of retstart and retmax URL parms that all utilities have in common
 ###################################################################################################
 def setCommonParms(retstart_input, retmax_input):
     retstart = '&retstart=' + str(retstart_input)   #Starting record    
     retmax = '&retmax=' + str(retmax_input)         #Maximum records returned
-    retmode= '&retmode=xml'                         #Output format
-
-    return retstart, retmax, retmode      
+                             
+    return retstart, retmax      
 
 ###################################################################################################
 # Uses the esearch utility to obtain a list of PMIDs.  Returns the list of PMIDs as a string.
 ###################################################################################################
-def getPMIDs(retstart, retmax, retmode, xml_file_ids):
+def getPMIDs(retstart, retmax, xml_file_ids):
     
     #Enter the query parameters that are specific to the esearch utility
-    util = 'esearch.fcgi?'
-    rettype= '&rettype=uilist'
+    util = ESEARCH
+    
     
     #Build the url to pull the PMIDs via the eSearch utility
-    url = BASE + util + DB + retstart + retmax + rettype + retmode + QUERY
+    url = BASE + util + DB + retstart + retmax + RETTYPE + RETMODE + QUERY
        
     #Issue url request, write response to an xml file, and parse the pmids in it
     response = issue_request(url)
@@ -158,13 +166,12 @@ def getPMIDs(retstart, retmax, retmode, xml_file_ids):
 ###################################################################################################
 # Uses the eSummary utility to extract summary information.  Returns a list of summary data.
 ###################################################################################################
-def getSummaryInfo(retstart, retmax, retmode, xml_file_summary, id_list_str):
+def getSummaryInfo(retstart, retmax, xml_file_summary, id_list_str):
     #Build the url for the eSummary util, passing in the id_list from the parsing routine
-    util = 'esummary.fcgi?'
-    idparam = '&id='
+    util = ESUMMARY
     pmids = id_list_str
 
-    url = BASE + util + DB + retstart + retmax + retmode + idparam + pmids
+    url = BASE + util + DB + retstart + retmax + RETMODE + IDPARM + pmids
     
     #Issue url request, write response to an XML summary file, parse the summary
     response = issue_request(url)
@@ -177,13 +184,12 @@ def getSummaryInfo(retstart, retmax, retmode, xml_file_summary, id_list_str):
 # Uses the eFetch utility to extract author and keyword information from full xml records.  
 # Returns lists of authors and keywords.
 ###################################################################################################
-def getFullInfo(retstart, retmax, retmode, xml_file_full, id_list_str):
+def getFullInfo(retstart, retmax, xml_file_full, id_list_str):
     #Build the url for the eFetch util, passing in the id_list
-    util = 'efetch.fcgi?'
-    idparam = '&id='
+    util = EFETCH
     pmids = id_list_str
 
-    url = BASE + util + DB + retstart + retmax + retmode + idparam + pmids
+    url = BASE + util + DB + retstart + retmax + RETMODE + IDPARM + pmids
 
     #Issue url request, write response to an XML full details file, parse the full details file
     response = issue_request(url)

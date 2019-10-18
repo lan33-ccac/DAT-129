@@ -34,7 +34,7 @@ Access to the PubMed database, and many other scientific databases is provided b
 	- The base URL of the API endpoint
 	- The database (i.e., pubmed)
 	- The name of the eUtility
-	- The retstart parm, which indicates which number record should be returned first.  (This is useful when the program is run multiple times to append records.)
+	- The retstart parm, which indicates which number record should be returned first.  (This is useful when the program is run multiple times to collect additional records.)
 	- The retmax parm, which indicates the max number of records that should be returned in a single request.
 	- The retmode and rettype parms, which determine how the requested information is returned and formatted.
 	- The query.  The best way to build the query is to enter search terms manually and then copy Pubmed's translation of the search terms into the program.  The following shows an example of a translated query:
