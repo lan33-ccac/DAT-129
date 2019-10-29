@@ -25,7 +25,6 @@ try:
     record = cursor.fetchone()      #use fetchall or fetchmany to retrieve multiple records
     print("SQLite Database Version is: ", record)
     
- 
 except sqlite3.Error as error:
     print("Error while connecting to SQlite", error)
 finally:

@@ -65,8 +65,12 @@ def connect_SQLiteDB():
 def create_Table(dbconn, cursor):
 
     query_create_table ='''CREATE TABLE IF NOT EXISTS
-                            users(id INTEGER PRIMARY KEY, name TEXT,
-                            phone TEXT, email TEXT unique, password TEXT)'''
+                            users(
+                            id INTEGER PRIMARY KEY, 
+                            name TEXT,
+                            phone TEXT, 
+                            email TEXT unique, 
+                            password TEXT)'''
 
 # Type Conversions:
 # Python Type   SQLite Type
@@ -103,7 +107,7 @@ def insert_Rows(dbconn, cursor):
     
     name2 = 'Dan'
     phone2 = '4129013268'
-    email2 = 'dan@nydick,com'
+    email2 = 'dan@nydick.com'
     pwd2 = 'xfds4@83'    
     
     #Build a list of tuples
@@ -164,8 +168,9 @@ def select_Rows(dbconn, cursor):
         cursor.execute(select_query)
         rows = cursor.fetchall()
         print()
+        print(f'{"id":<5}{"name":>5}{"phone":>12}{"email":>25}{"password":>10}')
         for row in rows:
-            print('{0} : {1}, {2}, {3}'.format(row[0], row[1], row[2], row[3]))
+            print(f'{row[0]:<5}{row[1]:>5}{row[2]:>12}{row[3]:>25}{row[4]:>10}')
             
         #To store recordset in a Pandas dataframe:
         df= pd.io.sql.read_sql(select_query, dbconn)
