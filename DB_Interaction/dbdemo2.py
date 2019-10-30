@@ -102,7 +102,7 @@ def create_Table(dbconn, cursor):
 def insert_Rows_Version1(dbconn, cursor):
      
     insert_query1 = '''INSERT INTO users(name, phone, email, password)
-                  VALUES('Lisa', '4124018564', 'lisa@nydick.com', 'baseba11' )'''
+                  VALUES('Lisa', '4124018564', 'lisa@nydick.com', 'baseba11')'''
     
     insert_query2 = '''INSERT INTO users(name, phone, email, password)
                   VALUES('Dan', '4129013268', 'dan@nydick.com', 'xrfds4@83')'''
@@ -130,9 +130,8 @@ def insert_Rows_Version1(dbconn, cursor):
 ###################################################################################################
 def insert_Rows_Version2(dbconn, cursor):
   
-    #Parameterized query
     sql_script = '''INSERT INTO users(name, phone, email, password)
-                        VALUES('Lisa', '4124018564', 'lisa@nydick.com', 'baseba11' );
+                        VALUES('Lisa', '4124018564', 'lisa@nydick.com', 'baseba11');
                     INSERT INTO users(name, phone, email, password)
                         VALUES('Dan', '4129013268', 'dan@nydick.com', 'xrfds4@83');'''
 
@@ -156,19 +155,19 @@ def insert_Rows_Version2(dbconn, cursor):
 # Inserts 2 rows into the new table
 ###################################################################################################
 def insert_Rows_Version3(dbconn, cursor):
-    name1 = 'Lisa'
-    phone1 = '4124018564'
-    email1 = 'lisa@nydick.com'
-    pwd1 = 'baseba11'
-    
-    name2 = 'Dan'
-    phone2 = '4129013268'
-    email2 = 'dan@nydick.com'
-    pwd2 = 'xfds4@83'    
+#    name1 = 'Lisa'
+#    phone1 = '4124018564'
+#    email1 = 'lisa@nydick.com'
+#    pwd1 = 'baseba11'
+#    
+#    name2 = 'Dan'
+#    phone2 = '4129013268'
+#    email2 = 'dan@nydick.com'
+#    pwd2 = 'xfds4@83'    
     
     #Build a list of tuples
-    user1 = (name1, phone1, email1, pwd1)
-    user2 = (name2, phone2, email2, pwd2)
+    user1 = ('Lisa', '4124018564', 'lisa@nydick.com', 'baseba11')
+    user2 = ('Dan', '4129013268', 'dan@nydick.com', 'xxfds4@83')
     
     #Parameterized query
     insert_query = '''INSERT INTO users(name, phone, email, password)
@@ -195,19 +194,19 @@ def insert_Rows_Version3(dbconn, cursor):
 # Inserts 2 rows into the new table
 ###################################################################################################
 def insert_Rows_Version4(dbconn, cursor):
-    name1 = 'Lisa'
-    phone1 = '4124018564'
-    email1 = 'lisa@nydick.com'
-    pwd1 = 'baseba11'
-    
-    name2 = 'Dan'
-    phone2 = '4129013268'
-    email2 = 'dan@nydick.com'
-    pwd2 = 'xfds4@83'    
+#    name1 = 'Lisa'
+#    phone1 = '4124018564'
+#    email1 = 'lisa@nydick.com'
+#    pwd1 = 'baseba11'
+#    
+#    name2 = 'Dan'
+#    phone2 = '4129013268'
+#    email2 = 'dan@nydick.com'
+#    pwd2 = 'xfds4@83'    
     
     #Build a list of tuples
-    users = [(name1, phone1, email1, pwd1),
-             (name2, phone2, email2, pwd2)]
+    users = [('Lisa', '4124018564', 'lisa@nydick.com', 'baseba11'),
+             ('Dan', '4129013268', 'dan@nydick.com', 'xxfds4@83')]
     
     #Parameterized query
     insert_query = '''INSERT INTO users(name, phone, email, password)
