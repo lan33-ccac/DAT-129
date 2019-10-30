@@ -108,7 +108,7 @@ def insert_Rows_Version1(dbconn, cursor):
                   VALUES('Dan', '4129013268', 'dan@nydick.com', 'xrfds4@83')'''
 
     try: 
-        #Use executemany method to insert the list of tuples                 
+        #Use execute method twice, once for each insert query                 
         cursor.execute(insert_query1)
         cursor.execute(insert_query2)
         dbconn.commit()
@@ -136,7 +136,7 @@ def insert_Rows_Version2(dbconn, cursor):
                         VALUES('Dan', '4129013268', 'dan@nydick.com', 'xrfds4@83');'''
 
     try: 
-        #Use executemany method to insert the list of tuples                 
+        #Use executescript method to execute all SQL commands in script                 
         cursor.executescript(sql_script)
         dbconn.commit()
         print()
@@ -151,21 +151,13 @@ def insert_Rows_Version2(dbconn, cursor):
         dbconn = handle_DB_Error(dbconn, cursor)
 
     return dbconn
+
 ###################################################################################################
-# Inserts 2 rows into the new table
+# Inserts 2 rows into the new table using a parameterized query
 ###################################################################################################
 def insert_Rows_Version3(dbconn, cursor):
-#    name1 = 'Lisa'
-#    phone1 = '4124018564'
-#    email1 = 'lisa@nydick.com'
-#    pwd1 = 'baseba11'
-#    
-#    name2 = 'Dan'
-#    phone2 = '4129013268'
-#    email2 = 'dan@nydick.com'
-#    pwd2 = 'xfds4@83'    
     
-    #Build a list of tuples
+    #Build tuples for each set of values
     user1 = ('Lisa', '4124018564', 'lisa@nydick.com', 'baseba11')
     user2 = ('Dan', '4129013268', 'dan@nydick.com', 'xxfds4@83')
     
@@ -174,7 +166,7 @@ def insert_Rows_Version3(dbconn, cursor):
                   VALUES(?,?,?,?)'''
 
     try: 
-        #Use executemany method to insert the list of tuples                 
+        #Call execute method twice, once for each user
         cursor.execute(insert_query, user1)
         cursor.execute(insert_query, user2)
         dbconn.commit()
@@ -191,18 +183,11 @@ def insert_Rows_Version3(dbconn, cursor):
 
     return dbconn    
 ###################################################################################################
-# Inserts 2 rows into the new table
+# Inserts 2 rows into the new table using a list of tuples and a parameterized query
+# with the .executemany method
 ###################################################################################################
 def insert_Rows_Version4(dbconn, cursor):
-#    name1 = 'Lisa'
-#    phone1 = '4124018564'
-#    email1 = 'lisa@nydick.com'
-#    pwd1 = 'baseba11'
-#    
-#    name2 = 'Dan'
-#    phone2 = '4129013268'
-#    email2 = 'dan@nydick.com'
-#    pwd2 = 'xfds4@83'    
+
     
     #Build a list of tuples
     users = [('Lisa', '4124018564', 'lisa@nydick.com', 'baseba11'),
