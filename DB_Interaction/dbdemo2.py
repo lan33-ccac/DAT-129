@@ -25,7 +25,7 @@ def main():
         dbconn = create_Table(dbconn, cursor)
         if dbconn:
             #Insert a couple of rows into the new table
-            dbconn = insert_Rows(dbconn, cursor)            
+            dbconn = insert_Rows_Version4(dbconn, cursor)            
             if dbconn:
                 #Update a value in a row
                 dbconn = update_Row(dbconn, cursor)
@@ -95,11 +95,106 @@ def create_Table(dbconn, cursor):
     
     #This will be None if there was an error
     return dbconn    
+
+###################################################################################################
+# Inserts 2 rows into the new table using 2 insert and 2 cursor.execute methods
+###################################################################################################
+def insert_Rows_Version1(dbconn, cursor):
+     
+    insert_query1 = '''INSERT INTO users(name, phone, email, password)
+                  VALUES('Lisa', '4124018564', 'lisa@nydick.com', 'baseba11' )'''
     
+    insert_query2 = '''INSERT INTO users(name, phone, email, password)
+                  VALUES('Dan', '4129013268', 'dan@nydick.com', 'xrfds4@83')'''
+
+    try: 
+        #Use executemany method to insert the list of tuples                 
+        cursor.execute(insert_query1)
+        cursor.execute(insert_query2)
+        dbconn.commit()
+        print()
+        print('Rows added successfully.')
+
+    except sqlite3.IntegrityError:
+        print('Record(s) already exist(s).')
+        dbconn.rollback()
+
+    except sqlite3.Error as error: 
+        print('Error occurred when adding a user.', error)
+        dbconn = handle_DB_Error(dbconn, cursor)
+
+    return dbconn
+
+###################################################################################################
+# Inserts 2 rows into the new table using 2 insert and 2 cursor.execute methods
+###################################################################################################
+def insert_Rows_Version2(dbconn, cursor):
+  
+    #Parameterized query
+    sql_script = '''INSERT INTO users(name, phone, email, password)
+                        VALUES('Lisa', '4124018564', 'lisa@nydick.com', 'baseba11' );
+                    INSERT INTO users(name, phone, email, password)
+                        VALUES('Dan', '4129013268', 'dan@nydick.com', 'xrfds4@83');'''
+
+    try: 
+        #Use executemany method to insert the list of tuples                 
+        cursor.executescript(sql_script)
+        dbconn.commit()
+        print()
+        print('Rows added successfully.')
+
+    except sqlite3.IntegrityError:
+        print('Record(s) already exist(s).')
+        dbconn.rollback()
+
+    except sqlite3.Error as error: 
+        print('Error occurred when adding a user.', error)
+        dbconn = handle_DB_Error(dbconn, cursor)
+
+    return dbconn
 ###################################################################################################
 # Inserts 2 rows into the new table
 ###################################################################################################
-def insert_Rows(dbconn, cursor):
+def insert_Rows_Version3(dbconn, cursor):
+    name1 = 'Lisa'
+    phone1 = '4124018564'
+    email1 = 'lisa@nydick.com'
+    pwd1 = 'baseba11'
+    
+    name2 = 'Dan'
+    phone2 = '4129013268'
+    email2 = 'dan@nydick.com'
+    pwd2 = 'xfds4@83'    
+    
+    #Build a list of tuples
+    user1 = (name1, phone1, email1, pwd1)
+    user2 = (name2, phone2, email2, pwd2)
+    
+    #Parameterized query
+    insert_query = '''INSERT INTO users(name, phone, email, password)
+                  VALUES(?,?,?,?)'''
+
+    try: 
+        #Use executemany method to insert the list of tuples                 
+        cursor.execute(insert_query, user1)
+        cursor.execute(insert_query, user2)
+        dbconn.commit()
+        print()
+        print('Rows added successfully.')
+
+    except sqlite3.IntegrityError:
+        print('Record(s) already exist(s).')
+        dbconn.rollback()
+
+    except sqlite3.Error as error: 
+        print('Error occurred when adding a user.', error)
+        dbconn = handle_DB_Error(dbconn, cursor)
+
+    return dbconn    
+###################################################################################################
+# Inserts 2 rows into the new table
+###################################################################################################
+def insert_Rows_Version4(dbconn, cursor):
     name1 = 'Lisa'
     phone1 = '4124018564'
     email1 = 'lisa@nydick.com'
@@ -244,6 +339,7 @@ def handle_DB_Error(dbconn, cursor):
         finally:
             #call function to close DB connection and cursor
             close_DB_Resources(dbconn, cursor)        
+            dbconn = None
             return dbconn
 
 ###################################################################################################
