@@ -6,7 +6,9 @@
 # 1. Do More Accidents Involving Fatalities Occur in Rural or Urban Areas?
 # 2. Do More Accidents Occur on Curved or Straight Pieces of Roads?
 # 3. In which PA Counties do the Most Accidents Occur?
-# 4. What Type of Driver Impairment is Involved in the Most Accidents?
+# 4. Which Allegheny County Municipalities Have the Highest Number of Fatal Accidents?
+# 5. What Type of Driver Impairment is Involved in the Most Accidents?
+# 6. What Types of Roads (e.g., State, Local, Interstate, or Turnpike) are Involved in the Most Accidents?
 # Author: Lisa Nydick
 # Last Modified: 11/18/19
 ###################################################################################################
@@ -33,10 +35,16 @@ def main():
         create_road_shape_dataframe(engine)
         
         #Use Pandas to determine which PA counties have the greatest number of accidents
-        create_county_dataframe(engine)
+        create_PA_counties_dataframe(engine)
+        
+        #Use Pandas to determine which Allegheny County municipalities have the greatest number of fatal accidents
+        create_allegheny_county_dataframe(engine)
         
         #Use Pandas to determine which type of impairment is most commonly involved in accidents
         create_impairment_dataframe(engine)
+        
+        #Use Pandas to determine what type of road is most commonly involved in accidents
+        create_road_type_dataframe(engine)
 
 ###################################################################################################
 #  Creates an SQLAlchemy DB Engine that can be passed to Pandas
@@ -95,9 +103,12 @@ def create_area_type_dataframe(engine):
            
         #Print the dataframe
         print_dataframe(df)
+
+        #Eliminate percentages from plot
+        df = df = df.loc[:, ['Counts']]
         
         #Plot the dataframe in a bar chart
-        plot_dataframe(df,'Types of Areas Involved in Accidents with Fatalities', 'Counts', 'Area Type', 'blue' )   
+        plot_dataframe(df,'Types of Areas Involved in Accidents with Fatalities', 'Area Type', 'Counts', 'blue' )   
 
     except Exception as err:
         print('Unexpected Error Occurred in function create_area_type_dataframe: ', err)
@@ -138,9 +149,12 @@ def create_road_shape_dataframe(engine):
            
         #Print the dataframe
         print_dataframe(df)
+
+        #Eliminate percentages from plot
+        df = df = df.loc[:, ['Counts']]
         
         #Plot the dataframe in a bar chart
-        plot_dataframe(df,'Accidents Involving Curved vs. Straight Roads', 'Counts', 'Road Shape', 'green' )
+        plot_dataframe(df,'Accidents Involving Curved vs. Straight Roads', 'Road Shape', 'Counts', 'green' )
 
     except Exception as err:
         print('Unexpected Error Occurred in function create_county_dataframe: ', err)
@@ -154,7 +168,7 @@ def create_road_shape_dataframe(engine):
 #  5. Add a column to the dataframe that calculates percentage of totals for each group
 #  6. Display and plot stats
 ###################################################################################################
-def create_county_dataframe(engine):
+def create_PA_counties_dataframe(engine):
 
     try:
      
@@ -179,13 +193,67 @@ def create_county_dataframe(engine):
            
         #Print the dataframe
         print_dataframe(df)
-        
+ 
+        #Eliminate percentages from plot
+        df = df = df.loc[:, ['Counts']]
+       
         #Plot the dataframe in a bar chart
-        plot_dataframe(df,'Number of Accidents by County', 'Counts', 'County', 'orange' )
+        plot_dataframe(df,'Number of Accidents by County', 'County', 'Counts', 'orange' )
         
         
     except Exception as err:
-        print('Unexpected Error Occurred in function create_county_dataframe: ', err)
+        print('Unexpected Error Occurred in function create_PA_counties_dataframe: ', err)
+
+
+###################################################################################################
+#  Use Pandas to determine which Allegheny County municipalities have the greatest number of fatal accidents
+#  1. Execute an SQL Select Query
+#  2. Get a total count of fatal accidents
+#  3. Group the dataframe by county
+#  4. Count the records in each group
+#  5. Add a column to the dataframe that calculates percentage of totals for each group
+#  6. Display and plot stats
+###################################################################################################
+def create_allegheny_county_dataframe(engine):
+
+    try:
+     
+        #Build a SQL SELECT query to select the columns we need
+        sql = "SELECT crash_record_number, municipality_name FROM Crashes WHERE county_name = 'Allegheny' AND fatal > 0;"
+            
+        #Call function to execute the SQL query
+        df = execute_query(sql, engine)
+        
+        #Get the total count of accident records
+        total_recs = get_total_recs(df, 'crash_record_number')
+    
+        if total_recs == 0:
+            return
+         
+        print_headers('Which Allegheny County Municipalities Have the Greatest Number of Fatal Accidents?', 
+                      'Total Number of Fatal Accidents: ', 
+                      total_recs)
+        
+        #Rename columns, group by a column, sort values by counts, and add a percentage of total recs column 
+        df = rename_cols_group_sort_df(df, 'Counts', 'Municipality', total_recs)      
+        
+
+        #Print the dataframe
+        print_dataframe(df)
+        
+        #Eliminate percentages from plot
+        df = df = df.loc[:, ['Counts']]
+        
+        #Return only the top 10 results
+        df = df.nlargest(10, 'Counts')
+                
+        #Plot the dataframe in a bar chart
+        plot_dataframe(df,'Top 10 Allegheny County Municipalities with Fatal Accidents', 'Municipality', 'Counts', 'cyan' )
+        
+        
+    except Exception as err:
+        print('Unexpected Error Occurred in function create_allegheny_county_dataframe: ', err)
+
         
 ###################################################################################################
 #  Use Pandas to determine what type of driver impairments are involved in the most accidents
@@ -272,6 +340,91 @@ def process_impairment(df, col_name, new_col_name, truevalue, falsevalue):
     
     except Exception as err:
         print('Unexpected Error Occurred in process_impairment function: ', err)  
+
+###################################################################################################
+#  Use Pandas to determine what type of driver impairments are involved in the most accidents
+#  1. Execute an SQL Select Query
+#  2. Get a total count of accidents
+#  3. Call the process_impairment function to collect data about each type of impairment
+#  4. Combine the resulting dataframes into a single dataframe
+#  5. Add a column to the dataframe that calculates percentage of totals for each impairment
+#  6. Display and plot stats
+###################################################################################################    
+def create_road_type_dataframe(engine):
+
+    try:
+     
+        #Build a SQL SELECT query to select the columns we need
+        sql = "SELECT crash_record_number, interstate, state_road, local_road_only, turnpike FROM Crashes;"
+            
+        #Call function to execute the SQL query
+        df = execute_query(sql, engine)
+        
+        #Get the total count of accident records
+        total_recs = get_total_recs(df, 'crash_record_number')
+    
+        if total_recs == 0:
+            return
+         
+        print_headers('What Type of Road is Involved in the Most Accidents?', 
+                      'Total Number of Accidents: ', 
+                      total_recs)
+        
+        #Process each possible type of impairment
+        df1 = process_road_type(df, 'interstate', 'Interstate?', 'Interstate', 'Non Interstate')
+        df2 = process_road_type(df, 'state_road', 'State Road?', 'State Road', 'Non State Road')
+        df3 = process_road_type(df, 'local_road_only', 'Local Road?', 'Local Road', 'Non Local Road')
+        df4 = process_road_type(df, 'turnpike', 'Turnpike?', 'Turnpike', 'Non Turnpike')
+           
+        #concatinate the dataframes
+        frames = [df1, df2, df3, df4]
+        newdf = pd.concat(frames)
+        
+       # Sort group counts in descending order
+        newdf = sort_by_count(newdf, 'Counts')
+        
+        #Add a percent of total records column to the dataframe
+        newdf = add_percentage_col(newdf, 'Counts', total_recs )
+        
+        #Print the dataframe
+        print_dataframe(newdf)
+        
+        #Plot the dataframe in a bar chart
+        plot_dataframe(newdf, 'Accidents Involving Different Types of Roads', 'Road Type', 'Counts', 'pink' )  
+
+    except Exception as err:
+        print('Unexpected Error Occurred in create_road_type_dataframe function: ', err)   
+
+###################################################################################################
+#  Processes a single type of road and returns a dataframe for that type of road
+#  with counts
+###################################################################################################
+def process_road_type(df, col_name, new_col_name, truevalue, falsevalue):
+    
+    try:
+        #Create a dataframe from the crash_record_number and impairement columns
+        df = df.loc[:, ['crash_record_number', col_name]] 
+        
+        # Change True/False values
+        df = map_true_false_values(df, col_name, truevalue, falsevalue)
+        
+        #rename columns for display purposes
+        df = rename_cols(df, 'Counts', new_col_name)
+        
+        #filter on impairment type
+        road_type = df[new_col_name] == truevalue
+        df_filtered = df[road_type]
+        
+        #group on filtered value to retain dataframe
+        df = group_col(df_filtered, new_col_name)
+        
+        # Get count of impairments
+        df = get_group_count(df)
+                
+        return df
+    
+    except Exception as err:
+        print('Unexpected Error Occurred in process_road_type function: ', err)  
 
 ###################################################################################################
 # Uses Pandas to execute a SQL Query and store the results in a dataframe 
