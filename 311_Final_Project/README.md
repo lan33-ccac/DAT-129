@@ -31,17 +31,17 @@ If desired, the program also writes the contents of the dataframe to an Excel or
 ---
 
 ![Capture1](https://github.com/lan33-ccac/DAT-129/blob/Final_Project/311_Final_Project/Capture1.JPG)
-![Capture2](Capture2.jpg)
-![Capture3](Capture3.jpg)
+![Capture2](https://github.com/lan33-ccac/DAT-129/blob/master/311_Final_Project/Capture2.JPG)
+![Capture3](https://github.com/lan33-ccac/DAT-129/blob/master/311_Final_Project/Capture3.JPG)
 
 ---
 
 Another sample program run, this time displaying the mean number of days each request type has stayed in an Open status:
 
 ---
-![Capture4](Capture4.jpg)
-![Capture5](Capture5.jpg)
-![Capture6](Capture6.jpg)
+![Capture4](https://github.com/lan33-ccac/DAT-129/blob/master/311_Final_Project/Capture4.JPG)
+![Capture5](https://github.com/lan33-ccac/DAT-129/blob/master/311_Final_Project/Capture5.JPG)
+![Capture6](https://github.com/lan33-ccac/DAT-129/blob/master/311_Final_Project/Capture6.JPG)
 ---
 
 #### Initialization Parameters: 
@@ -77,7 +77,7 @@ The program reads in the following initialization values from console input.  No
 Sample initialization parameter values:
 
 --- 
-![Capture7](Capture7.jpg)
+![Capture7](https://github.com/lan33-ccac/DAT-129/blob/master/311_Final_Project/Capture7.JPG)
 ---
 
 #### Preprocessor Output File as Input to 311.py
@@ -85,17 +85,16 @@ Sample initialization parameter values:
 The following screen shots show sample output from the 311.py program when it uses the output of the preprocessor.py program as its input file:
 
 ---
-![Capture9](Capture9.jpg)
-![Capture10](Capture10.jpg)
-![Capture11](Capture11.jpg) 
+![Capture9](https://github.com/lan33-ccac/DAT-129/blob/master/311_Final_Project/Capture9.JPG)
+![Capture10](https://github.com/lan33-ccac/DAT-129/blob/master/311_Final_Project/Capture10.JPG)
+![Capture11](https://github.com/lan33-ccac/DAT-129/blob/master/311_Final_Project/Capture11.JPG) 
 ---
 
 #### Notes:
 * A sample Category\_Translation.csv file is provided with this program.  It can be customized as needed to map request types to categories.  However, it must have a "Category" and "Issue" column.  (The Issue column corresponds with the input file's REQUEST TYPE values.)  The contents of this file should be reviewed and modified as needed to ensure that request types are being mapped into the most accurate categories.  It does not matter whether the columns are sorted by Category or by Issue.  Sample Category\_Translation.csv file snippet:
 
 ---
-![Capture8](Capture8.jpg)
-
+![Capture8](https://github.com/lan33-ccac/DAT-129/blob/master/311_Final_Project/Capture8.JPG)
 ---
 
 * The preprocessor program reads each row in the 311 input file, looking for a match between the input file's "REQUEST TYPE" value and the values contained in the "Category Translation" csv file (under the "Issue" column).  If it finds a match, the program substitutes the corresponding value for "Category" as the new "REQUEST TYPE" value.  If it doesn't find a match, the program uses the original REQUEST TYPE value.
@@ -108,7 +107,7 @@ The following screen shots show sample output from the 311.py program when it us
 This is a supplemental program that calculates request counts by neighborhood.  This data can be used as input to the QGIS mapping software.  The following is sample output from the program:
 
 ---
-![SampleOutput12](Capture12.jpg)
+![Capture12](https://github.com/lan33-ccac/DAT-129/blob/master/311_Final_Project/Capture12.JPG)
 --- 
 
 
