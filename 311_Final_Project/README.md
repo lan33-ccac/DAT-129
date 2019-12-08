@@ -29,7 +29,8 @@ If desired, the program also writes the contents of the dataframe to an Excel or
 #### Sample Output of 311.py
 
 ---
-![SampleOutput1](Capture1.jpg)
+
+![Capture1](https://github.com/lan33-ccac/DAT-129 Coursework/311\_Final\_Project/Capture1.jpg)
 ![SampleOutput2](Capture2.jpg)
 ![SampleOutput3](Capture3.jpg)
 
