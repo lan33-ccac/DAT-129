@@ -30,18 +30,18 @@ If desired, the program also writes the contents of the dataframe to an Excel or
 
 ---
 
-![Capture1](https://github.com/lan33-ccac/DAT-129/311\_Final\_Project/Capture1.jpg)
-![SampleOutput2](Capture2.jpg)
-![SampleOutput3](Capture3.jpg)
+![Capture1](311\_Final\_Project/Capture1.jpg)
+![Capture2](Capture2.jpg)
+![Capture3](Capture3.jpg)
 
 ---
 
 Another sample program run, this time displaying the mean number of days each request type has stayed in an Open status:
 
 ---
-![SampleOutput4](Capture4.jpg)
-![SampleOutput5](Capture5.jpg)
-![SampleOutput6](Capture6.jpg)
+![Capture4](Capture4.jpg)
+![Capture5](Capture5.jpg)
+![Capture6](Capture6.jpg)
 ---
 
 #### Initialization Parameters: 
