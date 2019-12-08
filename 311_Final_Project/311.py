@@ -14,7 +14,7 @@
 # 8. If the number of records the user wants to display is less than 30, it plots the
 #    results in a bar chart (if higher than that, the chart would be illegible.)
 # Author: Lisa Nydick
-# Last Modified: 12/03/2019
+# Last Modified: 12/05/2019
 ###################################################################################################
 
 import pandas as pd
@@ -32,13 +32,22 @@ STATUS_NEW = 0
 STATUS_ALL = 2
 
 #Result Options
-RESULT_MODE_COUNT = 1
-RESULT_MODE_ED = 2
+RESULT_MODE_COUNT = 1       #Request count mode
+RESULT_MODE_ED = 2          #Elapsed days mode
 
 #Group By option constants
-GROUP_BY_REQ_TYPE = 1
-GROUP_BY_DEPT = 2
-GROUP_BY_BOTH = 3
+GROUP_BY_REQ_TYPE = 1       #Group by REQUEST_TYPE column
+GROUP_BY_DEPT = 2           #Group by DEPARTMENT column
+GROUP_BY_BOTH = 3           #Group by REQUEST_TYPE, then DEPARTMENT
+
+#Sort by option constants
+SORT_BY_REQ_TYPE = 1         #Sort results by REQUEST_TYPE
+SORT_BY_DEPT = 2             #Sort results by DEPARTMENT
+SORT_BY_REQ_COUNT_OR_ED = 3  #Sort results by Request Count or Elapsed Days, depending on results mode
+
+#Number of results constants
+ALL_RESULTS = 999   #Flag to display all results
+PLOTTING_MAX = 30   #Maximum number of records to allow to be plotted.  (Too many makes the display unreadable.)
 
 #Column Key Constants
 REQUEST_ID = 'REQUEST_ID'
@@ -58,6 +67,13 @@ MSG_ENTER_STATUS_1 = 'Enter the status number of interest. (0 = New, 1 = Closed,
 MSG_ENTER_STATUS_2 = 'Enter the status number of interest. (0 = New, 3 = Open): '
 MSG_ENTER_GROUP_BY_OPTION = 'Do you want to group results by request type or by assigned department or both? (1 = Request Type, 2 = Dept, 3 = Both): '
 MSG_INVALID_GROUP_BY_OPTION = 'Invalid group by option.  Please try again.'
+MSG_ENTER_SORT_BY_OPTION_FOR_REQ_TYPE_GROUPING_COUNTS = 'Sort Results by Request Type or Request Count (1 = Request Type, 3 = Request Count)? '
+MSG_ENTER_SORT_BY_OPTION_FOR_REQ_TYPE_GROUPING_ED = 'Sort Results by Request Type or Elapsed Days (1 = Request Type, 3 = Elapsed Days)? '
+MSG_ENTER_SORT_BY_OPTION_FOR_DEPT_GROUPING_COUNTS = 'Sort Results by Department or Request Count (2 = Department, 3 = Request Count)? '
+MSG_ENTER_SORT_BY_OPTION_FOR_DEPT_GROUPING_ED = 'Sort Results by Department or Elapsed Days (2 = Department, 3 = Elapsed Days)? '
+MSG_ENTER_SORT_BY_OPTION_FOR_BOTH_GROUPING_COUNTS = 'Sort Results by Request Type, Department, or Request Count (1 = Request Type, 2 = Department, 3 = Request Count)? '
+MSG_ENTER_SORT_BY_OPTION_FOR_BOTH_GROUPING_ED = 'Sort Results by Request Type, Department, or Elapsed Days (1 = Request Type, 2 = Department, 3 = Elapsed Days)? '
+MSG_INVALID_SORT_BY_OPTION =  'Invalid sort option.  Please try again.'
 MSG_INVALID_STATUS = 'Invalid status.  Please try again.'
 MSG_ENTER_NRESPONSE = 'Enter the number of results you want to display or 999 for all results: '
 MSG_INVALID_NRESPONSE = 'Invalid number of results.  Please try again.'
@@ -98,10 +114,9 @@ DEPARTMENTS_WITH_REQUESTS_STAYING_IN = ' DEPARTMENTS WITH REQUESTS STAYING IN TH
 DEPARTMENTS = " Departments' "
 UNKNOWN = 'Unknown'
 
-#Console Display option constants
-MAX_ROWS = 400
-MAX_COL_WIDTH_1 = 40
-MAX_COL_WIDTH_2 = 25
+#Pandas Display option constants
+MAX_COL_WIDTH_1 = 40    #Column width when only REQUEST_TYPE or DEPARTMENT will be displayed
+MAX_COL_WIDTH_2 = 25    #Column width when both REQUEST_TYPE and DEPARTMENT will be displayed
 DISPLAY_WIDTH = 90
 
 #Plotting constants
@@ -114,9 +129,11 @@ PLOT_DEPARTMENT = 'Department'
 PLOT_DAYS = 'Days'
 PLOT_REQ_BY_REQ_TYPE_AND_DEPT = ' Requests by Request Type and Department'
 PLOT_REQ_TYPE_DEPT = 'Request Type, Department'
-PLOT_MEAN_DAYS_STAYED_OPEN_BY_REQ_TYPE = 'MEAN DAYS REQUESTS HAVE STAYED OPEN, BY REQUEST TYPE'
-PLOT_MEAN_DAYS_STAYED_OPEN_BY_DEPT = 'MEAN DAYS REQUESTS HAVE STAYED OPEN, BY DEPARTMENT'
-PLOT_MEAN_DAYS_STAYED_OPEN_BY_REQ_TYPE_AND_DEPT = 'MEAN DAYS REQUESTS HAVE STAYED OPEN, BY REQUEST TYPE AND DEPT'
+PLOT_MEAN_DAYS_REQUESTS_HAVE_STAYED_IN = 'Mean Days Requests Have Stayed in '
+PLOT_STATUS = ' Status, '
+PLOT_BY_REQ_TYPE = 'by Request Type'
+PLOT_BY_DEPT = 'by Department'
+PLOT_BY_BOTH = 'by Request Type, Department'
 
 #Output File Constants
 FILE_TYPE_CSV = 'CSV'
@@ -137,7 +154,7 @@ def main():
     total_rec_count, total_req_type_count, count, maxval, minval, mean = 0, 0, 0, 0, 0, 0
     
     #Read in parms that the user might want to change between runs
-    infile, results_mode, group_by_option, status, nresults = get_input_parms()
+    infile, results_mode, group_by_option, sort_by_option, status, nresults = get_input_parms()
     
     #Set text version of status number for display purposes
     status_type = set_status_type(status)
@@ -149,7 +166,7 @@ def main():
     if fatal_error == False:
     
         #Process the dataframe and collect statistics
-        df, total_rec_count, total_req_type_count, count, maxval, minval, mean = process_dataframe(results_mode, status_type, group_by_option, status, df)
+        df, total_rec_count, total_req_type_count, count, maxval, minval, mean = process_dataframe(results_mode, status_type, group_by_option, sort_by_option, status, df)
 
 
         if fatal_error == False:
@@ -158,15 +175,15 @@ def main():
         
             if fatal_error == False:
                 #Set some Pandas display options
-                set_display_options(group_by_option)
+                set_display_options(group_by_option, nresults)
              
                 if fatal_error == False:
                     #Print and plot info about the requests.
                     #Call a different routine if result type is counts versus elapsed days
                     if results_mode == RESULT_MODE_COUNT:
-                        df = print_results_counts(df, group_by_option, nresults, status_type, total_req_type_count, total_rec_count)
+                        df = print_results_counts(df, group_by_option, sort_by_option, nresults, status_type, total_req_type_count, total_rec_count)
                     else:
-                        df = print_results_ED(df, group_by_option, nresults, status_type, total_req_type_count, total_rec_count)
+                        df = print_results_ED(df, group_by_option, sort_by_option, nresults, status_type, total_req_type_count, total_rec_count)
                         
                     if fatal_error == False:
                         #Send the results to an excel file if the user wants to
@@ -190,9 +207,10 @@ def get_input_parms():
     results_mode = get_results_mode()
     status = get_request_status(results_mode)
     group_by_option = get_group_by_option()
+    sort_by_option = get_sort_by_option(group_by_option, results_mode)
     nresults = get_nresults()        
         
-    return infile, results_mode, group_by_option, status, nresults
+    return infile, results_mode, group_by_option, sort_by_option, status, nresults
 
 ###################################################################################################
 #  Gets the name of the input CSV file and makes sure the file exists
@@ -280,6 +298,62 @@ def get_group_by_option():
     
     return group_by_option
 
+###################################################################################################
+#  Gets the option to sort results by request type, department, or request count
+###################################################################################################
+def get_sort_by_option(group_by_option, results_mode):
+    
+    invalid_option = True
+    while invalid_option:
+        try:
+            #Make different sorting options available based on the type of grouping the user selected
+            #Grouping by REQUEST_TYPE
+            if group_by_option == GROUP_BY_REQ_TYPE:
+                #Display a different message depending on whether request counts or elapsed days will by displayed
+                if results_mode == RESULT_MODE_COUNT:
+                    sort_by_option = int(input(MSG_ENTER_SORT_BY_OPTION_FOR_REQ_TYPE_GROUPING_COUNTS))
+                else: #results_mode == RESULT_MODE_ED (elapsed days)
+                    sort_by_option = int(input(MSG_ENTER_SORT_BY_OPTION_FOR_REQ_TYPE_GROUPING_ED))
+                #Validate the input value
+                if sort_by_option != SORT_BY_REQ_TYPE and sort_by_option != SORT_BY_REQ_COUNT_OR_ED:
+                    print(MSG_INVALID_SORT_BY_OPTION)
+                    invalid_option = True
+                else:
+                    invalid_option = False
+                    
+            #Grouping by DEPARTMENT        
+            elif group_by_option == GROUP_BY_DEPT:
+                #Display a different message depending on whether request counts or elapsed days will by displayed
+                if results_mode == RESULT_MODE_COUNT:                
+                    sort_by_option = int(input(MSG_ENTER_SORT_BY_OPTION_FOR_DEPT_GROUPING_COUNTS))
+                else: #results_mode == RESULT_MODE_ED (elapsed days)                
+                    sort_by_option = int(input(MSG_ENTER_SORT_BY_OPTION_FOR_DEPT_GROUPING_ED))
+                #Validate the input value
+                if sort_by_option != SORT_BY_DEPT and sort_by_option != SORT_BY_REQ_COUNT_OR_ED:
+                    print(MSG_INVALID_SORT_BY_OPTION)
+                    invalid_option = True                              
+                else:
+                    invalid_option = False
+                    
+            #Grouping by REQUEST_TYPE, then DEPARTMENT
+            elif group_by_option == GROUP_BY_BOTH:
+                #Display a different message depending on whether request counts or elapsed days will by displayed
+                if results_mode == RESULT_MODE_COUNT:
+                    sort_by_option = int(input(MSG_ENTER_SORT_BY_OPTION_FOR_BOTH_GROUPING_COUNTS))
+                else:   #results_mode == RESULT_MODE_ED (elapsed days)
+                    sort_by_option = int(input(MSG_ENTER_SORT_BY_OPTION_FOR_BOTH_GROUPING_ED))
+                #Validate the input value
+                if sort_by_option != SORT_BY_REQ_TYPE and sort_by_option != SORT_BY_DEPT and sort_by_option != SORT_BY_REQ_COUNT_OR_ED:
+                    print(MSG_INVALID_SORT_BY_OPTION)
+                    invalid_option = True
+                else:
+                    invalid_option = False
+                        
+        except ValueError:
+            print(MSG_INVALID_SORT_BY_OPTION)
+            invalid_option = True
+    
+    return sort_by_option
 
 ###################################################################################################
 #  Gets the number of records the user wants to display and ensures that it is a valid integer value
@@ -335,7 +409,7 @@ def read_csvfile(infile):
 ###################################################################################################
 #  Extracts relevant data from a dataframe and computes statistics
 ###################################################################################################
-def process_dataframe(results_mode, status_type, group_by_option, status, df):
+def process_dataframe(results_mode, status_type, group_by_option, sort_by_option, status, df):
     routine_name = 'process_dataframe'
     total_rec_count, total_req_type_count, count, maxval, minval, mean = 0, 0, 0, 0, 0, 0
     
@@ -361,7 +435,7 @@ def process_dataframe(results_mode, status_type, group_by_option, status, df):
                     if fatal_error == False:
                         #if results mode is count, call function to group and sort counts info
                         if results_mode == RESULT_MODE_COUNT:    
-                            df, total_req_type_count = group_and_sort_counts(df, group_by_option)
+                            df, total_req_type_count = group_and_sort_counts(df, group_by_option, sort_by_option)
                         else:
                             #Results mode is elapsed days
                             #Convert string dates in CREATED_ON column to date objects
@@ -372,7 +446,7 @@ def process_dataframe(results_mode, status_type, group_by_option, status, df):
                                 df = get_elapsed_days(df)
                                 if fatal_error == False:
                                     #Call function to group and sort elapsed day info
-                                    df, total_req_type_count = group_and_sort_ED(df, group_by_option) 
+                                    df, total_req_type_count = group_and_sort_ED(df, group_by_option, sort_by_option) 
                                 
                         
                         if fatal_error == False:
@@ -386,7 +460,6 @@ def process_dataframe(results_mode, status_type, group_by_option, status, df):
         #Add routine to call stack for error message
         routines.append(routine_name)
           
- 
     return df, total_rec_count, total_req_type_count, count, maxval, minval, mean
 
 ###################################################################################################
@@ -534,7 +607,7 @@ def get_elapsed_days(df):
 # gets counts of each type or department,
 # and sorts the results by request count (in descending order)
 ###################################################################################################        
-def group_and_sort_counts(df, group_by_option):
+def group_and_sort_counts(df, group_by_option, sort_by_option):
     routine_name = 'group_and_sort_counts'
     total_req_type_count = 0    
     try: 
@@ -547,7 +620,7 @@ def group_and_sort_counts(df, group_by_option):
             total_req_type_count = int(df[REQUEST_TYPE].count())
             group = df.groupby([REQUEST_TYPE])
             
-        if group_by_option == GROUP_BY_DEPT:
+        elif group_by_option == GROUP_BY_DEPT:
             df = df.loc[:, [DEPARTMENT, STATUS]]
             #Rename the second column for display purposes
             df.columns = [DEPARTMENT, REQ_COUNT]
@@ -555,9 +628,9 @@ def group_and_sort_counts(df, group_by_option):
             total_req_type_count = int(df[DEPARTMENT].count())
             group = df.groupby([DEPARTMENT])
             
-        if group_by_option == GROUP_BY_BOTH:
+        else:   #group_by_option == GROUP_BY_BOTH:
             df = df.loc[:, [REQUEST_TYPE, DEPARTMENT, STATUS]]
-            #Rename the second column for display purposes
+            #Rename the last column for display purposes
             df.columns = [REQUEST_TYPE, DEPARTMENT, REQ_COUNT]
             #Get a total count of all requests in the status of interest (open, closed, or all)
             total_req_type_count = int(df[REQUEST_TYPE].count())
@@ -565,9 +638,17 @@ def group_and_sort_counts(df, group_by_option):
         
         count_requests = group.count()
 
-        #Sort the df by the counts in descending order
-        sorted_requests = count_requests.sort_values(by=[REQ_COUNT], ascending = False)
-        
+        #Sort the dataframe based on the user's sorting preference
+        if sort_by_option == SORT_BY_REQ_TYPE:
+            #Sort first by REQUEST_TYPE (in ascending order), then by REQUEST_COUNT(in descending order)
+            sorted_requests = count_requests.sort_values(by=[REQUEST_TYPE, REQ_COUNT], ascending = [True, False])
+        elif sort_by_option == SORT_BY_DEPT:
+                  #Sort first by DEPARTMENT (in ascending order), then by REQUEST_COUNT(in descending order)
+            sorted_requests = count_requests.sort_values(by=[DEPARTMENT, REQ_COUNT], ascending = [True, False])
+        else:   #sort_by_option == SORT_BY_REQ_COUNT   
+            #sort by REQ_COUNT (in descending order)
+            sorted_requests = count_requests.sort_values(by=[REQ_COUNT], ascending = False)            
+    
     except Exception as err:
         handle_unexpected_error(err, routine_name)
         sorted_requests = None 
@@ -579,7 +660,7 @@ def group_and_sort_counts(df, group_by_option):
 # gets counts of each type or department,
 # and sorts the results by elapsed days (ED) (in descending order)
 ###################################################################################################        
-def group_and_sort_ED(df, group_by_option):
+def group_and_sort_ED(df, group_by_option, sort_by_option):
     routine_name = 'group_and_sort_ED'
     total_req_type_count = 0    
     try:
@@ -602,8 +683,17 @@ def group_and_sort_ED(df, group_by_option):
         #Get the mean number of open requests within each request type or department
         mean_elapsed_days = group.mean()
         
-        #Sort the df by the counts in descending order
-        sorted_mean_elapsed_days = mean_elapsed_days.sort_values(by=[MEAN_ELAPSED_DAYS], ascending = False)
+        #Sort the dataframe based on the user's sorting preference
+        if sort_by_option == SORT_BY_REQ_TYPE:
+            #Sort first by REQUEST_TYPE (in ascending order), then by MEAN_ELAPSED_DAYS (in descending order)
+            sorted_mean_elapsed_days = mean_elapsed_days.sort_values(by=[REQUEST_TYPE, MEAN_ELAPSED_DAYS], ascending = [True, False])
+        elif sort_by_option == SORT_BY_DEPT:
+                  #Sort first by DEPARTMENT (in ascending order), then by MEAN_ELAPSED_DAYS (in descending order)
+            sorted_mean_elapsed_days = mean_elapsed_days.sort_values(by=[DEPARTMENT, MEAN_ELAPSED_DAYS], ascending = [True, False])
+        else:   #sort_by_option == SORT_BY_REQ_COUNT_OR_ED   
+            #sort by REQ_COUNT (in descending order)
+            sorted_mean_elapsed_days = mean_elapsed_days.sort_values(by=[MEAN_ELAPSED_DAYS], ascending = False)
+
     
     except Exception as err:
         handle_unexpected_error(err, routine_name)
@@ -646,13 +736,14 @@ def print_stats(group_by_option, total_req_type_count, status_type, count, maxva
 ###################################################################################################
 # Sets display options for terminal output 
 ###################################################################################################
-def set_display_options(group_by_option):
+def set_display_options(group_by_option, nresults):
     routine_name = 'set_display_options'
     try:
         #set the format of floating point numbers
         pd.options.display.float_format = '{:,.2f}'.format
-        #set the maximum num cols that will display in the console
-        pd.set_option('display.max_rows', MAX_ROWS)
+        #set the maximum num cols that will display in the console based on how many records
+        #the user wants to display.  Otherwise Pandas might not display all of them.
+        pd.options.display.max_rows = nresults
         if group_by_option == GROUP_BY_REQ_TYPE or group_by_option == GROUP_BY_DEPT:
             pd.options.display.max_colwidth = MAX_COL_WIDTH_1
         else: #use shorter column widths when req type and department need to be displayed
@@ -664,38 +755,44 @@ def set_display_options(group_by_option):
 ###################################################################################################
 # Prints a list of request count info and displays a bar chart 
 ###################################################################################################    
-def print_results_counts(df, group_by_option, nresults, status_type, total_req_type_count, total_rec_count):
+def print_results_counts(df, group_by_option, sort_by_option, nresults, status_type, total_req_type_count, total_rec_count):
     routine_name = 'print_results_counts'    
     try:
+
+        #Add a column for percentage calculation.
+        df[PERCENT_TOTAL_REQS] = df[REQ_COUNT] / total_req_type_count * 100
+
         print()
         print(TOTAL_REQUESTS + str(total_rec_count))
         print(TOTAL + status_type + STATUS_REQUESTS + str(total_req_type_count))
         print()
         
         # 999 means print all results.  Anything else means print the top nresults
-        if nresults != 999:
-            if group_by_option == GROUP_BY_REQ_TYPE or group_by_option == GROUP_BY_BOTH: 
-                print(TOP + str(nresults) + TYPES_OF + status_type + REQUESTS)
+        if nresults != ALL_RESULTS:
+            #If the results are sorted by REQUEST_COUNT, display appropriate message
+            if sort_by_option == SORT_BY_REQ_COUNT_OR_ED:    
+                if group_by_option == GROUP_BY_REQ_TYPE or group_by_option == GROUP_BY_BOTH: 
+                    print(TOP + str(nresults) + TYPES_OF + status_type + REQUESTS)
+                else:
+                    print(TOP + str(nresults) + DEPARTMENTS + status_type + REQUESTS)
             else:
-                print(TOP + str(nresults) + DEPARTMENTS + status_type + REQUESTS)    
+                #Results are sorted by REQUEST_TYPE or DEPARTMENT, so print a generic message
+                print(status_type + REQUESTS)
         else:
             print(status_type + REQUESTS)
         
         # Only displaying top results
-        if nresults != 999:
-            top_requests = df.nlargest(nresults, REQ_COUNT)
-
-            #plot the bar chart if nresults less than 30.  Otherwise it would be unreadable.            
-            if nresults < 30:
+        if nresults != ALL_RESULTS:
+            top_requests = df.head(nresults)
+ 
+            #plot the bar chart if nresults less than 31.  Otherwise it would be unreadable.            
+            if nresults < PLOTTING_MAX + 1:
                 plot_results_counts(top_requests, group_by_option, status_type)
     
         else:   #999 means that we want all records
             top_requests = df
             #Don't display the bar chart because it will be too big
-       
-        #Add a column for percentage calculation.   
-        top_requests[PERCENT_TOTAL_REQS] = top_requests[REQ_COUNT] / total_req_type_count * 100
-    
+          
         print()
         print(top_requests)
         print()
@@ -709,7 +806,7 @@ def print_results_counts(df, group_by_option, nresults, status_type, total_req_t
 ###################################################################################################
 # Prints a list of elapsed day info and displays a bar chart 
 ###################################################################################################
-def print_results_ED(df, group_by_option, nresults, status_type, total_req_type_count, total_rec_count):
+def print_results_ED(df, group_by_option, sort_by_option, nresults, status_type, total_req_type_count, total_rec_count):
     routine_name = 'print_results_ED'
     try:    
         print()
@@ -719,22 +816,31 @@ def print_results_ED(df, group_by_option, nresults, status_type, total_req_type_
         
         
         # 999 means print all results.  Anything else means print the top nresults
-        if nresults != 999:
-            if group_by_option == GROUP_BY_REQ_TYPE or group_by_option == GROUP_BY_BOTH:
-                print(TOP + str(nresults) + REQUEST_TYPES_STAYING + status_type + STATUS_THE_LONGEST)
+        if nresults != ALL_RESULTS:
+            #If the results are sorted by elapsed days, display appropriate message
+            if sort_by_option == SORT_BY_REQ_COUNT_OR_ED:            
+                if group_by_option == GROUP_BY_REQ_TYPE or group_by_option == GROUP_BY_BOTH:
+                    print(TOP + str(nresults) + REQUEST_TYPES_STAYING + status_type + STATUS_THE_LONGEST)
+                else:
+                    print(TOP + str(nresults) + DEPARTMENTS_WITH_REQUESTS_STAYING_IN + status_type + STATUS_THE_LONGEST)    
             else:
-                print(TOP + str(nresults) + DEPARTMENTS_WITH_REQUESTS_STAYING_IN + status_type + STATUS_THE_LONGEST)    
+                #Results are sorted by REQUEST_TYPE or DEPARTMENT, so print generic message
+                print(status_type + REQUESTS)
         else:
-            if group_by_option == GROUP_BY_REQ_TYPE or group_by_option == GROUP_BY_BOTH:
-                print(REQUEST_TYPES_STAYING + status_type + STATUS_THE_LONGEST)
+            if sort_by_option == SORT_BY_REQ_COUNT_OR_ED:
+                if group_by_option == GROUP_BY_REQ_TYPE or group_by_option == GROUP_BY_BOTH:
+                    print(REQUEST_TYPES_STAYING + status_type + STATUS_THE_LONGEST)
+                else:
+                    print(DEPARTMENTS_WITH_REQUESTS_STAYING_IN + status_type + STATUS_THE_LONGEST)
             else:
-                print(DEPARTMENTS_WITH_REQUESTS_STAYING_IN + status_type + STATUS_THE_LONGEST)    
+                print(status_type + REQUESTS)
                 
         # Only displaying top results
-        if nresults != 999:
-            top_requests = df.nlargest(nresults, MEAN_ELAPSED_DAYS)
-            #plot the bar chart if nresults less than 30.  Otherwise it would be unreadable.            
-            if nresults < 30:
+        if nresults != ALL_RESULTS:
+            top_requests = df.head(nresults)
+            
+            #plot the bar chart if nresults less than 31.  Otherwise it would be unreadable.            
+            if nresults < PLOTTING_MAX + 1:
                 plot_results_ED(top_requests, group_by_option, status_type)
     
         else:   #999 means that we want all records
@@ -758,8 +864,10 @@ def plot_results_counts(df, group_by_option, status_type):
     routine_name = 'plot_results_counts'
     try:
         
-        #Build the bar chart before adding percentage columns    
-        p = df.plot(kind='bar', figsize=(10,5), color='blue')
+        #Eliminate percentages from plot and just use the Request Count
+        df = df.loc[:, ['REQ_COUNT']]
+          
+        p = df.plot(kind='bar', figsize=(12,7), color='blue', grid = True)
         if group_by_option == GROUP_BY_REQ_TYPE:
             p.set_title(PLOT_COUNT_OF + status_type + PLOT_REQ_BY_REQ_TYPE, fontsize = 15)
             p.set_xlabel(PLOT_REQ_TYPE)
@@ -780,17 +888,18 @@ def plot_results_counts(df, group_by_option, status_type):
 ###################################################################################################
 def plot_results_ED(df, group_by_option, status_type):
     routine_name = 'plot_results_ED'
+
     try:
         #Build the bar chart    
-        p = df.plot(kind='bar', figsize=(10,5), color='blue')
+        p = df.plot(kind='bar', figsize=(12,7), color='blue', grid = True)
         if group_by_option == GROUP_BY_REQ_TYPE:
-            p.set_title(PLOT_MEAN_DAYS_STAYED_OPEN_BY_REQ_TYPE, fontsize = 15)
+            p.set_title(PLOT_MEAN_DAYS_REQUESTS_HAVE_STAYED_IN + status_type + PLOT_STATUS + PLOT_BY_REQ_TYPE, fontsize = 15)
             p.set_xlabel(PLOT_REQ_TYPE)
         elif group_by_option == GROUP_BY_BOTH:   
-            p.set_title(PLOT_MEAN_DAYS_STAYED_OPEN_BY_REQ_TYPE_AND_DEPT, fontsize = 15)
+            p.set_title(PLOT_MEAN_DAYS_REQUESTS_HAVE_STAYED_IN + status_type + PLOT_STATUS + PLOT_BY_BOTH, fontsize = 15)
             p.set_xlabel(PLOT_REQ_TYPE_DEPT)
         elif group_by_option == GROUP_BY_DEPT:
-            p.set_title(PLOT_MEAN_DAYS_STAYED_OPEN_BY_DEPT, fontsize = 15)    
+            p.set_title(PLOT_MEAN_DAYS_REQUESTS_HAVE_STAYED_IN + status_type + PLOT_STATUS + PLOT_BY_DEPT, fontsize = 15)    
             p.set_xlabel(PLOT_DEPARTMENT)
         p.set_ylabel(PLOT_DAYS)
         

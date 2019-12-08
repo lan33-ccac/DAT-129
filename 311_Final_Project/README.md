@@ -32,9 +32,10 @@ If desired, the program also writes the contents of the dataframe to an Excel or
 ![SampleOutput1](Capture1.jpg)
 ![SampleOutput2](Capture2.jpg)
 ![SampleOutput3](Capture3.jpg)
+
 ---
 
-Another sample program run:
+Another sample program run, this time displaying the mean number of days each request type has stayed in an Open status:
 
 ---
 ![SampleOutput4](Capture4.jpg)
@@ -46,10 +47,11 @@ Another sample program run:
 
 The program prompts for the following initialization values from console input:
 	
-* Display request counts vs. elapsed days:  The program can either display counts of requests that match selection criteria or the number of elapsed days requests have either been in an OPEN or NEW status.
+* Display request counts vs. elapsed days:  The program can either display counts of requests or the number of elapsed days requests have either been in an OPEN or NEW status.
 * Display info about all requests, OPEN requests, CLOSED requests, or NEW requests.  Note that in "elapsed days" mode, OPEN and NEW requests are the only available choices (i.e., ALL and CLOSED are not available.)
-* Group the data by request type, department, or both.  Note that records will always be sorted by either request counts or elapsed days (in descending order).
-* Enter the number of records to return.  Use 999 to return all records. 
+* Group the data by request type, department, or both.  IF you select both, the data will be grouped first by request type then by department.  
+* Sort the results based on request type, department, request count, or elapsed days.  Note that different sort options will be available based on whether you want to display information about request counts or elapsed days, and based on the grouping option you selected.  For example, if you want to group request counts by department only, your sorting options will be department and request counts.
+* Enter the number of records to return.  Use 999 to return all records.  Values greater than 30 will not be plotted in a bar chart because they would make the chart unreadable. 
 <p>
 
 #### Notes:
