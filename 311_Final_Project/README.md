@@ -30,7 +30,7 @@ If desired, the program also writes the contents of the dataframe to an Excel or
 
 ---
 
-![Capture1](311\_Final\_Project/Capture1.jpg)
+![Capture1](https://github.com/lan33-ccac/DAT-129/blob/Final_Project/311_Final_Project/Capture1.JPG)
 ![Capture2](Capture2.jpg)
 ![Capture3](Capture3.jpg)
 
@@ -77,7 +77,7 @@ The program reads in the following initialization values from console input.  No
 Sample initialization parameter values:
 
 --- 
-![SampleOutput7](Capture7.jpg)
+![Capture7](Capture7.jpg)
 ---
 
 #### Preprocessor Output File as Input to 311.py
@@ -85,16 +85,16 @@ Sample initialization parameter values:
 The following screen shots show sample output from the 311.py program when it uses the output of the preprocessor.py program as its input file:
 
 ---
-![SampleOutput9](Capture9.jpg)
-![SampleOutput10](Capture10.jpg)
-![SampleOutput11](Capture11.jpg) 
+![Capture9](Capture9.jpg)
+![Capture10](Capture10.jpg)
+![Capture11](Capture11.jpg) 
 ---
 
 #### Notes:
 * A sample Category\_Translation.csv file is provided with this program.  It can be customized as needed to map request types to categories.  However, it must have a "Category" and "Issue" column.  (The Issue column corresponds with the input file's REQUEST TYPE values.)  The contents of this file should be reviewed and modified as needed to ensure that request types are being mapped into the most accurate categories.  It does not matter whether the columns are sorted by Category or by Issue.  Sample Category\_Translation.csv file snippet:
 
 ---
-![SampleOutput8](Capture8.jpg)
+![Capture8](Capture8.jpg)
 
 ---
 
