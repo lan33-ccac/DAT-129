@@ -46,7 +46,7 @@ Access to the PubMed database, and many other scientific databases is provided b
 3. The program writes the XML response containing PMIDs out to a file.  It then parses out the PMIDs from the XML in this file using the xml.etree.ElementTree library.
 <p>
 4. The program builds a string of PMIDs and also builds a new URL which extracts publication summary data using the eSummary utility.  It writes the returned data to an XML file and then parses it to pull out the following data:
-<p>
+
 	- Publication Title
 	- Journal Name
 	- Publication Type (e.g., Journal Article)
@@ -56,13 +56,14 @@ Access to the PubMed database, and many other scientific databases is provided b
 	- DOI (a unique document identifier)
 <p>
 5. The program builds a new URL which extracts full data about publications via the eFetch utility.  The program writes the XML response to a file and parses it to pull out the following information:
-<p>
+
 	- Full list of author names
 	- Full list of keywords assigned to the publication
 <p>
 6. The program combines the PMIDs, summary info, with the list of author names and keywords, and then it writes records out to a CSV file. The following is sample output:
 <p>
 ---
+
 ![Capture5](https://github.com/lan33-ccac/DAT-129/blob/master/API/ScreenCapture5.JPG)
 
 

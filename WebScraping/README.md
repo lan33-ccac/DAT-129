@@ -4,6 +4,7 @@
 This program used the BeautifulSoup library to webscrape the federal government's database of clinical trials (https://clinicaltrials.gov) and writes information out to a csv file.
 
 ### Program Design/Flow:
+
 1. Initialization values can be set at runtime to control the search criteria that gets passed to the host.
 <p>
 2. A CSV output file is initialized with a header record.
@@ -15,7 +16,7 @@ This program used the BeautifulSoup library to webscrape the federal government'
 5. The BeautifulSoup object is initialized with the stored page.
 <p>
 6. The BeautifulSoup object is traversed, looking for the following information:
-<p>
+
 	- Study Status
 	- Study Number
 	- Study Name
@@ -34,4 +35,6 @@ This program used the BeautifulSoup library to webscrape the federal government'
 ### Sample CSV Output
 
 ![Capture2](https://github.com/lan33-ccac/DAT-129/blob/master/WebsScraping/ScreenCapture2.JPG)
+
+
  
