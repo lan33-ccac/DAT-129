@@ -17,21 +17,19 @@ The program loads statistics for each tree into a Pandas dataframe, displays the
 The following is output from Pandas:
 
 ---
-![SampleOutput1](Capture1.jpg)
-![SampleOutput2](Capture2.jpg)
-![SampleOutput3](Capture3.jpg)
-![SampleOutput4](Capture4.jpg)
-
+![Capture1](https://github.com/lan33-ccac/DAT-129/blob/master/FileTree/Capture1.JPG)
+![Capture2](https://github.com/lan33-ccac/DAT-129/blob/master/FileTree/Capture2.JPG)
+![Capture3](https://github.com/lan33-ccac/DAT-129/blob/master/FileTree/Capture3.JPG)
+![Capture4](https://github.com/lan33-ccac/DAT-129/blob/master/FileTree/Capture4.JPG)
 ---
 
 The following are Excel histograms and box plots based on the same data (exported from Pandas):
 
 ---
-![SampleOutput5](Capture5.jpg)
-![SampleOutput6](Capture6.jpg)
-![SampleOutput7](Capture7.jpg)
-![SampleOutput8](Capture8.jpg)
-![SampleOutput9](Capture9.jpg)
-
+![Capture5](https://github.com/lan33-ccac/DAT-129/blob/master/FileTree/Capture5.JPG)
+![Capture6](https://github.com/lan33-ccac/DAT-129/blob/master/FileTree/Capture6.JPG)
+![Capture7](https://github.com/lan33-ccac/DAT-129/blob/master/FileTree/Capture7.JPG)
+![Capture8](https://github.com/lan33-ccac/DAT-129/blob/master/FileTree/Capture8.JPG)
+![Capture9](https://github.com/lan33-ccac/DAT-129/blob/master/FileTree/Capture9.JPG)
 ---
  

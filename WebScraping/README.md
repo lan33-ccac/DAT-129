@@ -1,4 +1,4 @@
-#clinicaltrials.py Program
+# clinicaltrials.py Program
 
 ### Purpose:
 This program used the BeautifulSoup library to webscrape the federal government's database of clinical trials (https://clinicaltrials.gov) and writes information out to a csv file.
@@ -15,14 +15,23 @@ This program used the BeautifulSoup library to webscrape the federal government'
 5. The BeautifulSoup object is initialized with the stored page.
 <p>
 6. The BeautifulSoup object is traversed, looking for the following information:
-	* Study Status
-	* Study Number
-	* Study Name
-	* Condition(s) Studied
-	* Intervention(s)
-	* Study type
-	* Current Study Phase
-	* Location(s) of Study
+<p>
+	- Study Status
+	- Study Number
+	- Study Name
+	- Condition(s) Studied
+	- Intervention(s)
+	- Study type
+	- Current Study Phase
+	- Location(s) of Study
 <p>
 7. Each study's record is written out to the CSV file.
+
+### Sample Data from ClinicalTrials.gov Site
+
+![Capture1](https://github.com/lan33-ccac/DAT-129/blob/master/WebScraping/ScreenCapture1.JPG)
+
+### Sample CSV Output
+
+![Capture2](https://github.com/lan33-ccac/DAT-129/blob/master/WebsScraping/ScreenCapture2.JPG)
  

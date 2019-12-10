@@ -30,7 +30,7 @@ If desired, the program also writes the contents of the dataframe to an Excel or
 
 ---
 
-![Capture1](https://github.com/lan33-ccac/DAT-129/blob/Final_Project/311_Final_Project/Capture1.JPG)
+![Capture1](https://github.com/lan33-ccac/DAT-129/blob/master/311_Final_Project/Capture1.JPG)
 ![Capture2](https://github.com/lan33-ccac/DAT-129/blob/master/311_Final_Project/Capture2.JPG)
 ![Capture3](https://github.com/lan33-ccac/DAT-129/blob/master/311_Final_Project/Capture3.JPG)
 

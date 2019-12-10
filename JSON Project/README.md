@@ -24,7 +24,6 @@ This is an extension of the JSON program we started writing in class.  This prog
 
 * Reads filled-out selection criteria from a JSON-formatted file.
 * Reads and processes each record in a CSV file containing Capital Projects data:
-<p>
 	* Checks the record to see if it passes an integrity test, and logs malformed project records.
 	* Checks whether the record matches all search criteria from the JSON file.
 	* Prints eligible records to the console.

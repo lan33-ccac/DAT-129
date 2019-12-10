@@ -9,11 +9,11 @@ Pubmed is a large database of medical-related publications.  It allows the user 
 The following screen shot shows how search criteria is entered manually into Pubmed:
 
 ---
-![ScreenCapture1](ScreenCapture1.jpg)
+![Capture1](https://github.com/lan33-ccac/DAT-129/blob/master/API/ScreenCapture1.JPG)
 ---
 The following shows sample search results:
 
-![ScreenCapture2](ScreenCapture2.jpg)
+![Capture2](https://github.com/lan33-ccac/DAT-129/blob/master/API/ScreenCapture2.JPG)
 
 ### Entrez eUtilities
 Access to the PubMed database, and many other scientific databases is provided by an API called "Entrez."  The Entrez API includes 6 eUtilities, 3 of which were used by the pubmedAPI program:
@@ -40,7 +40,7 @@ Access to the PubMed database, and many other scientific databases is provided b
 	- The query.  The best way to build the query is to enter search terms manually and then copy Pubmed's translation of the search terms into the program.  The following shows an example of a translated query:
 	
 
-![ScreenCapture3](ScreenCapture3.jpg)
+![Capture3](https://github.com/lan33-ccac/DAT-129/blob/master/API/ScreenCapture3.JPG)
 	  
 <p>
 3. The program writes the XML response containing PMIDs out to a file.  It then parses out the PMIDs from the XML in this file using the xml.etree.ElementTree library.
@@ -63,7 +63,8 @@ Access to the PubMed database, and many other scientific databases is provided b
 6. The program combines the PMIDs, summary info, with the list of author names and keywords, and then it writes records out to a CSV file. The following is sample output:
 <p>
 ---
-![ScreenCapture5](ScreenCapture5.jpg)
+![Capture5](https://github.com/lan33-ccac/DAT-129/blob/master/API/ScreenCapture5.JPG)
+
 
  
  

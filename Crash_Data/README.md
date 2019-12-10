@@ -3,7 +3,7 @@
 ### Purpose:
 Loads a dataset containing PA Crash data reported to the Department of Transportation (PENNDOT) into a SQL Server Database via the Pandas package.
 
-#pacrashes_process.py
+# pacrashes_process.py
 
 ### Purpose:
 Uses the Pandas package to analyze the PENNDOT database.  It attempts to answer the following questions:
@@ -20,14 +20,14 @@ For each question, the script displays statistics and a bar chart.
 
 #### Sample Statistics:
 ---
-![Sample1](Crash_Capture1.jpg)
-![Sample2](Crash_Capture2.jpg)
-![Sample3](Crash_Capture3.jpg)
-![Sample4](Crash_Capture4.jpg)
-![Sample5](Crash_Capture5.jpg)
-![Sample6](Crash_Capture6.jpg)
-![Sample7](Crash_Capture7.jpg)
-![Sample8](Crash_Capture8.jpg)
-![Sample9](Crash_Capture9.jpg)
+![Capture1](https://github.com/lan33-ccac/DAT-129/blob/master/Crash_Data/Crash_Capture1.JPG)
+![Capture2](https://github.com/lan33-ccac/DAT-129/blob/master/Crash_Data/Crash_Capture2.JPG)
+![Capture3](https://github.com/lan33-ccac/DAT-129/blob/master/Crash_Data/Crash_Capture3.JPG)
+![Capture4](https://github.com/lan33-ccac/DAT-129/blob/master/Crash_Data/Crash_Capture4.JPG)
+![Capture5](https://github.com/lan33-ccac/DAT-129/blob/master/Crash_Data/Crash_Capture5.JPG)
+![Capture6](https://github.com/lan33-ccac/DAT-129/blob/master/Crash_Data/Crash_Capture6.JPG)
+![Capture7](https://github.com/lan33-ccac/DAT-129/blob/master/Crash_Data/Crash_Capture7.JPG)
+![Capture8](https://github.com/lan33-ccac/DAT-129/blob/master/Crash_Data/Crash_Capture8.JPG)
+![Capture9](https://github.com/lan33-ccac/DAT-129/blob/master/Crash_Data/Crash_Capture9.JPG)
 ---
 
